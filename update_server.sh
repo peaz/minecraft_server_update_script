@@ -14,8 +14,8 @@ fi
 CURRENT_VER=$(cat current_ver.txt)
 echo Current Version: $CURRENT_VER
 
-# Get the updated version_manifest.json
-wget -qN https://launchermeta.mojang.com/mc/game/version_manifest.json
+# Download the latest version_manifest.json
+wget -q https://launchermeta.mojang.com/mc/game/version_manifest.json
 
 # Get the latest release version number
 VER=$(jq -r '.latest.release' version_manifest.json)
@@ -23,36 +23,44 @@ echo Latest Version: $VER
 
 if [ $CURRENT_VER != $VER ]
 then
-    # Create the temp script to extract the latest <version>_manifest.json
-    echo "jq -r '.versions[] | select(.id == \"$VER\") | .url' version_manifest.json" > MANIFESTJQ.sh
-    chmod +x MANIFESTJQ.sh
+    # Create the jq command to extract the <latest_release_version>.json url
+    MANIFEST_JQ=$(echo "jq -r '.versions[] | select(.id == \"$VER\") | .url' version_manifest.json")
+    echo $VER.json - jq command: $MANIFEST_JQ
 
-    # Run the temp script and download the latest <version>_manifest.json
-    MANIFEST_URL=$(./MANIFESTJQ.sh)
-    echo URL: $MANIFEST_URL
-    wget -qN $MANIFEST_URL
+    # Query the <latest_release_version>.json
+    MANIFEST_URL=$(eval $MANIFEST_JQ)
+    echo $VER.json - URL:$MANIFEST_URL
+    
+    # Download the <latest_release_version>.json
+    wget -q $MANIFEST_URL
 
-    # Create the temp script to extract the latest server download URL from the <version>_manifest.json
-    echo "jq -r .downloads.server.url $VER.json" > DOWNLOADJQ.sh
-    chmod +x DOWNLOADJQ.sh
+    # Create the temp script to extract the latest server download URL from the <latest_release_version>.json
+    DOWNLOAD_JQ=$(echo "jq -r .downloads.server.url $VER.json")
+    echo Latest download jq command - $DOWNLOAD_JQ
 
+    # Query and get the latest release server.jar download URL
+    DOWNLOAD_URL=$(eval $DOWNLOAD_JQ)
+    echo Latest download URL: $DOWNLOAD_URL
+    
     # Make a backup copy of the current server.jar
+    echo Backing up the current server.jar to backups/server_$CURRENT_VER.jar
     mv server.jar backups/server_$CURRENT_VER.jar
 
     # Run the temp script and download the latest server.jar
-    DOWNLOAD_URL=$(./DOWNLOADJQ.sh)
-    echo URL: $DOWNLOAD_URL
+    # Let the wget run without the quiet mode on to show its progress in the terminal
+    echo "### Downloading $VER version server.jar now! ###"
     wget $DOWNLOAD_URL
 
-    # update the current_ver.txt to the latest version number 
+    # update the current_ver.txt to the latest release version number 
     echo $VER > current_ver.txt
 
-    # Clean up code
-    rm DOWNLOADJQ.sh
-    rm MANIFESTJQ.sh
+    # Delete the json files
+    echo Cleaning up temporary files
     rm version_manifest.json
     rm $VER.json
+
+    echo You have the latest $VER version of server.jar now!
 else
-    echo "Current server version is the latest already."
+    echo Current server version is the latest already.
     rm version_manifest.json
 fi
