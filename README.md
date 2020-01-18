@@ -42,3 +42,5 @@ Example below:-
 ```bash
 echo 1.15.1 > current_ver.txt
 ```
+
+[Blog post link](https://www.atpeaz.com/using-a-script-to-update-the-minecraft-server-jar/)
