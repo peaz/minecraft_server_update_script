@@ -2,7 +2,7 @@
 
 A script to check and download the latest Minecraft server.jar.
 This script was developed and tested to work with macOS Catalina zsh 5.7.1 (x86_64-apple-darwin19.0)
-While not tested, this script should also work on a Linux box.
+While not tested, this script should also work Linux OS as well..
 
 Why this script? Why not this gets you the download in less than a minute vs needing to open the browser and look for the Minecraft Server download page, then download the server.jar and then moving it to the right directory.
 
@@ -13,12 +13,14 @@ This script assumes that **wget** and **jq** is already installed on your Mac.
 - [wget](https://www.gnu.org/software/wget/)
 - [jq](https://stedolan.github.io/jq/)
 
-I recommend using [Homebrew](http://brew.sh/) to install both **wget** and **jq** if you don't already have them.
+For macOS users, I recommend using [Homebrew](http://brew.sh/) to install both **wget** and **jq** if you don't already have them.
 
 Instructions on installing Homebrew can be found at at this [link](https://brew.sh). Once installed, run the follwing command to install both **wget** and **jq**.
 ```bash
 brew install jq wget
 ```
+
+For Linux OS users, you'd probaby already have both jq and wget, and even if you don't, you wouldn't need anyone to tell you how to. :)
 
 # Using this script
 
@@ -43,4 +45,4 @@ Example below:-
 echo 1.15.1 > current_ver.txt
 ```
 
-[Blog post link](https://www.atpeaz.com/using-a-script-to-update-the-minecraft-server-jar/)
+Fun fact: This script can run on my iPad too. See [this blog post](https://www.atpeaz.com/using-a-script-to-update-the-minecraft-server-jar/) for a screenshot.
